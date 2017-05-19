@@ -1,4 +1,4 @@
-# Learning to mimic DTW
+# Learning DTW-Preserving Shapelets
 
 ## Description
 
