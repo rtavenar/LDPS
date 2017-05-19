@@ -8,8 +8,7 @@ L2-norm in the Shapelet Transform space is close to DTW between original time se
 ## Usage
 
 To learn a model and use it to perform $k$-means clustering in the Shapelet Transform space, 
-one should run (if no distance file is available for the dataset, DTW distances will be computed 
-on the fly, making the process somewhat slower):
+one should run:
 
 ```
 python clustering.py DatasetName [Conv]
