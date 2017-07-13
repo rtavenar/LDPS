@@ -401,8 +401,9 @@ class MimicModelIncremental(MimicBetaInitModelL2):
             idx_shp_end = idx_shp_start + self.size_shapelet_groups
             for idx_iter in range(idx_iter_start, idx_iter_start + niter):
                 self._update_shapelets_one_iter(_X, idx_iter, idx_start=idx_shp_start, idx_end=idx_shp_end)
-                avg_dist = numpy.mean(list(self.precomputed_dists.values()))
+                # TODO: print all shapelets
                 if (idx_iter + 1) % self.print_loss_every == 0:
+                    avg_dist = numpy.mean(list(self.precomputed_dists.values()))
                     if self.print_approx_loss:
                         loss = self._approximate_loss(_X)
                     else:
