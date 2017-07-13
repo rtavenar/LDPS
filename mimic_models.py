@@ -383,3 +383,52 @@ class MimicBetaInitModelConvL2(MimicBetaInitModelL2, ConvMimicModelL2):
 
     def _dM_dSkl(self, Xi, ti, Xj, tj, sz):
         return ConvMimicModelL2._dM_dSkl(self, Xi, ti, Xj, tj, sz)
+
+
+class MimicModelIncremental(MimicBetaInitModelL2):
+    def __init__(self, shapelet_lengths, size_shapelet_groups=1, **kwargs):
+        MimicBetaInitModelL2.__init__(self, shapelet_lengths, **kwargs)
+        self.size_shapelet_groups = size_shapelet_groups
+
+    def partial_fit(self, X, niter=None, idx_iter_start=0):
+        if niter is None:
+            niter = self.niter
+        _X = X.reshape((X.shape[0], -1, self.d))
+        # TODO
+        n_groups = 123
+        for group_id in range(n_groups):
+            idx_shp_start = group_id * self.size_shapelet_groups
+            idx_shp_end = idx_shp_start + self.size_shapelet_groups
+            for idx_iter in range(idx_iter_start, idx_iter_start + niter):
+                self._update_shapelets_one_iter(_X, idx_iter, idx_start=idx_shp_start, idx_end=idx_shp_end)
+                avg_dist = numpy.mean(list(self.precomputed_dists.values()))
+                if (idx_iter + 1) % self.print_loss_every == 0:
+                    if self.print_approx_loss:
+                        loss = self._approximate_loss(_X)
+                    else:
+                        loss = self._loss(_X)
+                    print("iteration %d, loss=%f (average dist: %f, beta=%f)" % (idx_iter + 1, loss, avg_dist, self.beta))
+
+    def _update_shapelets_one_iter(self, X, iter, idx_start, idx_end):
+        grad_S, grad_Beta = self._grad(X, idx_start=idx_start, idx_end=idx_end)  # TODO
+        if self.ada_grad:
+            # TODO
+            pass
+        else:
+            for k in range(self.n_shapelets):
+                self.shapelets[k][idx_start:idx_end] -= self.convergence_rate * grad_S[k]
+            new_beta = self.beta - self.convergence_rate * grad_Beta
+            conv_rate_beta = self.convergence_rate
+        if new_beta < 0.:
+            grad_Beta = self.beta / conv_rate_beta
+            new_beta = 0.
+        self.beta = new_beta
+        if self.ada_grad:
+            # TODO
+            for k in range(self.n_shapelets):
+                self.past_gradients_Skl[k] += grad_S[k] ** 2
+            self.past_gradients_Beta += grad_Beta ** 2
+
+    def _grad(self, X, idx_start, idx_end):
+        # TODO
+        return None
