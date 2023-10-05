@@ -14,5 +14,7 @@ one should run:
 python clustering.py DatasetName [Conv]
 ```
 
+## Other implementations
 
+A PyTorch implementation of the model is available at <https://rtavenar.github.io/hdr/parts/02/shapelets_cnn.html#Learning-to-Mimic-a-Target-Distance>.
 
